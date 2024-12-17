@@ -1,6 +1,6 @@
 package com.example.ims.controller;
 
-import com.example.ims.model.*;
+import com.example.ims.model.Course;
 import com.example.ims.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +14,9 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private InstructorService instructorService;
 
     @GetMapping
     public String getAllCourses(Model model) {
@@ -30,11 +33,14 @@ public class CourseController {
     @GetMapping("/add")
     public String addCourseForm(Model model) {
         model.addAttribute("course", new Course());
+        model.addAttribute("instructors", instructorService.getInstructors());
         return "add-course";
     }
 
     @PostMapping("/add")
     public String addCourse(@ModelAttribute Course course, RedirectAttributes redirectAttributes) {
+        Long instructorId = course.getInstructor().getId();
+        course.setInstructor(instructorService.getInstructorById(instructorId));
         courseService.addCourse(course);
         redirectAttributes.addFlashAttribute("message", "Course added successfully!");
         return "redirect:/courses";
@@ -43,12 +49,15 @@ public class CourseController {
     @GetMapping("/edit/{id}")
     public String editCourseForm(@PathVariable Long id, Model model) {
         model.addAttribute("course", courseService.getCourseById(id));
+        model.addAttribute("instructors", instructorService.getInstructors());
         return "edit-course";
     }
 
     @PostMapping("/edit/{id}")
     public String updateCourse(@PathVariable Long id, @ModelAttribute Course course, RedirectAttributes redirectAttributes) {
-        course.setId(id); 
+        course.setId(id);
+        Long instructorId = course.getInstructor().getId();
+        course.setInstructor(instructorService.getInstructorById(instructorId));
         courseService.updateCourse(course);
         redirectAttributes.addFlashAttribute("message", "Course updated successfully!");
         return "redirect:/courses";

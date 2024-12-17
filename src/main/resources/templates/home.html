@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Institute Management System</title>
+</head>
+<body>
+    <h1>Welcome to the Institute Management System</h1>
+    <div>
+        <p>Total Students: <span th:text="${totalStudents}"></span></p>
+        <p>Total Courses: <span th:text="${totalCourses}"></span></p>
+        <p>Total Instructors: <span th:text="${totalInstructors}"></span></p>
+    </div>
+
+    <h2>Navigation</h2>
+    <ul>
+        <li><a th:href="@{/students}">Students</a></li>
+        <li><a th:href="@{/courses}">Courses</a></li>
+        <li><a th:href="@{/instructors}">Instructors</a></li>
+    </ul>
+</body>
+</html>
