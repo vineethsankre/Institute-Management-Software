@@ -2,9 +2,13 @@ package com.example.ims.controller;
 
 import com.example.ims.model.Course;
 import com.example.ims.service.*;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -38,7 +42,7 @@ public class CourseController {
     }
 
     @PostMapping("/add")
-    public String addCourse(@ModelAttribute Course course, RedirectAttributes redirectAttributes) {
+    public String addCourse(@Valid @ModelAttribute Course course, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         Long instructorId = course.getInstructor().getId();
         course.setInstructor(instructorService.getInstructorById(instructorId));
         courseService.addCourse(course);
@@ -54,7 +58,10 @@ public class CourseController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateCourse(@PathVariable Long id, @ModelAttribute Course course, RedirectAttributes redirectAttributes) {
+    public String updateCourse(@PathVariable Long id, @Valid @ModelAttribute Course course, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    	if (bindingResult.hasErrors()) {
+            return "edit-course";
+        }
         course.setId(id);
         Long instructorId = course.getInstructor().getId();
         course.setInstructor(instructorService.getInstructorById(instructorId));

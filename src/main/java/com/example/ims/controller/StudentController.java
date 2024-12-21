@@ -1,10 +1,13 @@
 package com.example.ims.controller;
 
 import com.example.ims.model.Student;
-import com.example.ims.service.*;
+import com.example.ims.service.CourseService;
+import com.example.ims.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -38,9 +41,10 @@ public class StudentController {
     }
 
     @PostMapping("/add")
-    public String addStudent(@ModelAttribute Student student, RedirectAttributes redirectAttributes) {
-        Long courseId = student.getCourse().getId();
-        student.setCourse(courseService.getCourseById(courseId));
+    public String addStudent(@Valid @ModelAttribute Student student, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "add-student";
+        }
         studentService.addStudent(student);
         redirectAttributes.addFlashAttribute("message", "Student added successfully!");
         return "redirect:/students";
@@ -54,10 +58,11 @@ public class StudentController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateStudent(@PathVariable Long id, @ModelAttribute Student student, RedirectAttributes redirectAttributes) {
+    public String updateStudent(@PathVariable Long id, @Valid @ModelAttribute Student student, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "edit-student";
+        }
         student.setId(id);
-        Long courseId = student.getCourse().getId();
-        student.setCourse(courseService.getCourseById(courseId));
         studentService.updateStudent(student);
         redirectAttributes.addFlashAttribute("message", "Student updated successfully!");
         return "redirect:/students";
